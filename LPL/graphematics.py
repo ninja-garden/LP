@@ -1,40 +1,41 @@
-# -*- coding: utf-8 -*-
-
 """ Функции графематического анализа """
+import nltk as nl
+import codecs
 
-from nltk.tokenize import sent_tokenize as nlt_sent_tokenize
-from nltk.tokenize import word_tokenize as nlt_word_tokenize
-import re
 
 def sent_tokenize(text):
     """
     Функция разбиения текста на предложения
     :param text: исходный текст
-    :return: спискок предложений
+    :return: список предложений
     """
-    pattern = re.compile(r'([А-ЯA-Z]((т.п.|т.д.|пр.|г.)|[^?!.\(]|\([^\)]*\))*[.?!])')
-    return pattern.findall(text)
+    return nl.sent_tokenize(text, language="russian")
+
+
+def word_tokenize(sentense):
+    """
+    Функция разбиения предложения на слова
+    :param sentense(str): исходный текст
+    :return: список слов
+    Пока все специальные символы - отдельные слова.
+    Когда будут инструкции на эту тему исключим.
+    """
+    return nl.word_tokenize(sentense)
 
 
 def main():
-    text = 'вы выполняете поиск. Используем Google SSL;'
-    tokens = sent_tokenize(text)
-    print(tokens)
-    print(nlt_sent_tokenize(text))
-    print(nlt_word_tokenize(text))
+    print("Загружаем тестовый файл...")
+    file = codecs.open("..\\test.txt", "r", "utf_8_sig")
+    text = file.read()
+
+    sentences = sent_tokenize(text)
+    print("В тексте " + str(len(sentences)) + " предложения.")
+    sen_example_idx = int(input("Введите номер предложения "))
+    print(sentences[sen_example_idx])
+
+    words = [word_tokenize(sent) for sent in sentences]
+    print(words[sen_example_idx])
 
 
 if __name__ == "__main__":
     main()
-
-"""
-Как вариант:
-
-from nltk.tokenize import sent_tokenize
-sentence = "As the most quoted English writer Shakespeare has more than his share of famous quotes.  Some Shakespare famous quotes are known for their beauty, some for their everyday truths and some for their wisdom. We often talk about Shakespeare’s quotes as things the wise Bard is saying to us but, we should remember that some of his wisest words are spoken by his biggest fools. For example, both ‘neither a borrower nor a lender be,’ and ‘to thine own self be true’ are from the foolish, garrulous and quite disreputable Polonius in Hamlet."
-
-sent_tokenize(sentence)
-
-import nltk
-words = nltk.word_tokenize(raw_sentence)
-"""
