@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+from .Graphematic_analysis import Graphematics_analysis
 """ Храниище данных ЛП """
 
 
@@ -18,27 +17,25 @@ class ComplexSentence(Sentence):
     def __init__(self):
         pass
 
-class SImpleSentence(Sentence):
+class SimpleSentence(Sentence):
     """
     Простое предложение
     """
     def __init__(self):
         pass
 
-class Text:
+class Meta_info:
     """
     Метаинформация о тексте
     """
-    def __init__(self, text=''):
+    def __init__(self, graph_res):
         """
         Инициализация метаинформации о тексте
-        :param text:
+        :param graph_res:
         """
-        self.num_words = 0
-        self.words = none
-        self.num_sents = 0
-        self.sents = []
-        self.num_sym = 0
+        self.n_words = graph_res.n_words
+        self.n_sentences = len(graph_res.sentences)
+        self.len_sentences = graph_res.len_sentences
 
 class TextStorage:
     """
@@ -47,6 +44,10 @@ class TextStorage:
     def __init__(self, text):
         """
         Инициализация хранилища
-        :param text: объект класса Text с метаинформацией о тексте
+        :param text: текст
         """
-        self.text = Text
+        self.text = text
+        graphematic_result = Graphematics_analysis(text)
+        self.meta_info = Meta_info(graphematic_result)
+
+
