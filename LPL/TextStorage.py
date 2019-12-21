@@ -1,37 +1,80 @@
-class TextStorage():
-    
-    def __new__(self):
-        if not hasattr(self, 'instance'):
-            self.inst = super(TextStorage, self).__new__(self)
-        return self.inst
-    
+import json
+
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class TextStorage(metaclass=Singleton):
+    __metaclass__ = Singleton
+
     def __init__(self):
+        self.__Text = {'text': None, 'num_words': 0, 'words_list': [],
+                       'words_len': [], 'num_sents': None, 'sent_list': None,
+                       'num_syms': None}  # Метаинформация о тексте
 
-        
-        self._Text = { 'raw_text': None ,'num_words' : 15 , 'words_list' : [],
-                        'words_len': [], 'num_sents':None, 'sent_list':None,
-                     'simpSent_list':[],'first_simpSent_idx':[],'num_words_simpSent':[],
-                     'num_syms':None}   # Метаинформация о тексте
-        
-        self._Sentence = {} 
-        
-        self._SimpleSentence = {}
-        
-        self._WordCombination = {}
-        
-        self._Word = {}
+        self.__Sentence = {'simp_sent_list': [], 'sent_type': [], 'first_simp_sent_ind': [],
+                           'num_words_simp_sent': []
+                           }  # Информация о сложном предложении
 
-    
-    @property  # getter
-    def Text(self): 
-        print("getter method called")   
-        return self._Text
+        self.__SimpleSentence = {'word_comb': [], 'word': [], 'simp_sent_type': []
+                                 }  # Инф о простом предложении
 
-    
-    @Text.setter #setter
-    def Text(self, value,a):   
-        self._Text[a] = value
-    
-            
-s = TextStorage()
-print("Object created", s)
+        self.__WordCombination = {'first_word_ind': [], 'word_comb_type': [],
+                                  'main_word_ind': []
+                                  }  # Инф о словосочетаниях
+
+        self.__Word = {'gramm_class': [], 'flect_class': [], 'ending_len': [],
+                       '4': [], '5': []}  # Инф о словах
+
+    @property
+    def Text(self):
+        return self.__Text
+
+    @Text.setter
+    def Text(self, value):
+        self.__Text = value
+
+    @property
+    def Sent(self):
+        return self.__Sentence
+
+    @Sent.setter
+    def Sent(self, value):
+        self.__Sentence = value
+
+    @property
+    def SimpSent(self):
+        return self.__SimpleSentence
+
+    @SimpSent.setter
+    def SimpSent(self, value):
+        self.__SimpleSentence = value
+
+    @property
+    def WordComb(self):
+        return self.__WordCombination
+
+    @WordComb.setter
+    def WordComb(self, value):
+        self.__WordCombination = value
+
+    @property
+    def Word(self):
+        return self.__Word
+
+    @Word.setter
+    def Word(self, value):
+        self.__Word = value
+
+    def graphematic_to_json(self, filename):
+        """
+        Сохраняем результаты графематического анализа в json файл
+        :return:
+        """
+        with open(filename, "w") as json_file:
+            json.dump(self.__Text, json_file, indent=4, sort_keys=True)
