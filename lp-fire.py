@@ -79,8 +79,11 @@ def SSA(text, storage):
         print('Словосочетание | № перв.слв словосоч в предл. | Длина Словосоч | Тип словосоч | № главн. слова')
         morf = []
         coll_info = ssa.Collocations(morf_klass, morf)
+        wrd_comb = storage.Word_combinations[i]
         for info in coll_info:
             print(info[4], info[0], info[1], info[2], info[3])
+            wrd_comb.add_combination(first_word_ind=info[0], word_comb_type=info[2],
+                                     main_word_ind=info[3], word_comb_len=info[1])
 
         # поиск индексов главных слов в словосочетаниях
         ind_m = ssa.Find_main_word(morf_klass)
