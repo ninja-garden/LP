@@ -28,9 +28,9 @@ class WordCombinations:
     def get_combinations(self):
         return self.combinations
 
-class Sentences:
+class Sentence:
     """
-    Класс содержит информацию по всем сложным предложениям
+    Класс сложного предложения
     """
     def __init__(self, sent_type, first_simp_sent_ind, num_words_simp_sent):
         """
@@ -38,25 +38,9 @@ class Sentences:
         :param first_simp_sent_ind: индекс вхождения первого простого предложения
         :param num_words_simp_sent:
         """
-        self.sentences = []
         self.sent_type = sent_type
         self.first_simp_sent_ind = first_simp_sent_ind
         self.num_words_simp_sent = num_words_simp_sent
-
-    def add_sentence(self, sent):
-        """
-        Добавление предложения в список
-        :param simp_sent: сложное предложение
-        :return:
-        """
-        self.sentences.append()
-
-    def get_sentences(self):
-        """
-        Получение списка сложных предложение
-        :return: сложное предложение
-        """
-        return self.sentences
 
 class SimpleSentence:
     """
@@ -94,16 +78,16 @@ class TextStorage(metaclass=Singleton):
                        'words_len': [], 'num_sents': None, 'sent_list': None,
                        'num_syms': None}  # Метаинформация о тексте
 
-        self._word_combinations = []
+        self._word_combinations = [] # список словосочетаний по предложениям
 
-        self._sentences = Sentences()
+        self._sentences = [] # список сложных предложений по предложениям
 
-        self._simple_sentences = []
+        self._simple_sentences = [] # список простых предложений SimpleSentence по предложениям
 
-        #_Morph - результат морфологии
-        # sents_morph_classes содержит список предложений - каждый
+        #_morph - результат морфологии для каждого предложения
         #  элемент списка - список морфологических классов
-        self._Morph = {'sents_morph_classes':[]}
+        self._morph = []
+        self._ssa_sents = [] # результаты ССА по предложениям
 
     @property
     def Text(self):
@@ -117,20 +101,20 @@ class TextStorage(metaclass=Singleton):
             self._word_combinations.append(WordCombinations())
 
     @property
-    def Sent(self):
+    def Sents(self):
         return self._Sentence
 
-    @Sent.setter
-    def Sent(self, value):
-        self._Sentence = value
+    @Sents.setter
+    def Sents(self, value):
+        self._sentences = value
 
     @property
     def SimpSent(self):
-        return self._SimpleSentence
+        return self._simple_sentences
 
     @SimpSent.setter
     def SimpSent(self, value):
-        self._SimpleSentence = value
+        self._simple_sentences = value
 
     @property
     def Word_combinations(self):
@@ -141,12 +125,20 @@ class TextStorage(metaclass=Singleton):
         self._word_combinations = value
 
     @property
-    def Word(self):
-        return self._Word
+    def Morph(self):
+        return self._morph
 
-    @Word.setter
-    def Word(self, value):
-        self._Word = value
+    @Morph.setter
+    def Morph(self, value):
+        self._morph = value
+
+    @property
+    def SSA_sents(self):
+        return self._ssa_sents
+
+    @SSA_sents.setter
+    def SSA_sents(self, value):
+        self._ssa_sents = value
 
     def graphematic_to_json(self, filename):
         """
@@ -155,3 +147,26 @@ class TextStorage(metaclass=Singleton):
         """
         with open(filename, "w") as json_file:
             json.dump(self._Text, json_file, indent=4, sort_keys=True, ensure_ascii=False)
+
+    def morphology_to_json(self, filename):
+        """
+        Сохраняем результаты морфологического анализа в json файл
+        :return:
+        """
+        with open(filename, "w") as json_file:
+            json.dump(self._morph, json_file, indent=4, sort_keys=True, ensure_ascii=False)
+
+    def ssa_to_json(self, filename):
+        """
+        Сохраняем результаты ССА в json файл
+        :return:
+        """
+        result = []
+        combinations = self._word_combinations
+        for i in range(self._Text['num_sents']):
+            item = {}
+            item['combinations'] = combinations[i].get_combinations()
+            item['sp_skel'] = self._ssa_sents[i]
+            result.append(item)
+        with open(filename, "w") as json_file:
+            json.dump(result, json_file, indent=4, sort_keys=True, ensure_ascii=False)

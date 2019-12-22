@@ -56,6 +56,13 @@ def morph(text, storage):
     morph = Morphological_analysis()
     print("МОРФОЛОГИЧЕСКИЙ АНАЛИЗ")
     print("======================================================")
+    m = [['00/152/0000', '02/103/3110/3140', '01/070/'],
+         ['00/160/0050', '01/056/2120/2210/2240', '00/157/0040'],
+         ['02/103/2140', '01/056/2140', '00/145/1110', '00/117/1100', '02/001/1150', '01/103/2140', '01/056/2140']]
+    print(m)
+    print()
+    storage.Morph = m
+    storage.morphology_to_json(MORPH_FILE_NAME)
 
 def SSA(text, storage):
     """
@@ -96,14 +103,22 @@ def SSA(text, storage):
             s_p_sent, S, P = ssa.s_p(morf_klass, morf)
         except:
             pass
+        # Добавляем результаты в хранилище
+        sp_skel = {}
+        sp_skel["s_p_sent"] = s_p_sent
+        sp_skel["S"] = S
+        sp_skel["P"] = P
         print(s_p_sent)
         print(S)
         print(P)
         print("======================================================")
         print("Скелет предложения")
-        print(ssa.skel_sent(s_p_sent, ind_m, S, P))
+        skel = ssa.skel_sent(s_p_sent, ind_m, S, P)
+        sp_skel["skel"] = skel
+        storage.SSA_sents.append(sp_skel)
+        print(skel)
         print()
-
+    storage.ssa_to_json(SSA_FILE_NAME)
 
 @click.command()
 @click.argument('input_file')
@@ -121,6 +136,7 @@ def main(input_file):
     graphematic_analysis(text, storage)
     morph(text, storage)
     SSA(text, storage)
+
 
 if __name__ == '__main__':
     main()
