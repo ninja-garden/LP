@@ -2,7 +2,6 @@
 import nltk as nl
 import codecs
 
-
 class Graphematic_analysis:
     def __init__(self, text):
         """

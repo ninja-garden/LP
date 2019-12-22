@@ -10,11 +10,14 @@ class Semantic_analysis:
         posible_words = ['N','A','0','O','i','g','s','k','K','L','V','F','h','M','I']
         result = [[]]
         for sent in sentence:
-            if (sent in separators) or not(sent in posible_words):
-                result.append([sent])
-                result.append([])
-            else:
-                result[-1].append(sent)
+            try:
+                if (sent in separators) or not(sent in posible_words):
+                    result.append([sent])
+                    result.append([])
+                else:
+                    result[-1].append(sent)
+            except:
+                pass
         i = 0
         while i < len(result):
             if len(result[i]) > 1:
@@ -81,13 +84,6 @@ class Semantic_analysis:
         '''функция информация по словосочетаниям'''
         colloc = self.Find_Collocations(sent)
         colloc_info = self.CollocationsInfo(colloc)
-        for info in colloc_info:
-            print('словосочетание:',info[4])
-            print('№ первого слова словосочетания в предложении:',info[0])
-            print('длинна словосочетания:', info[1])
-            print('Тип словосочетания:', info[2])
-            print('номер главного слова:',info[3])
-            print()
         return colloc_info
 
 
@@ -123,12 +119,16 @@ class Semantic_analysis:
         coll_info = self.CollocationsInfo(self.Find_Collocations(sent))
         result = []
         for info in coll_info:
-            result.append(info[0]+info[3]-2)
+            if (info[3] is None):
+                result.append(None)
+            else:
+                result.append(info[0]+info[3]-2)
         return result
 
 
     def find_all_N_morf_info(self, sent, morf):
         main_N = self.Find_main_word(sent)
+        main_N = [N for N in main_N if N is not None]
         result = [(sent[N],N,morf[N]) for N in main_N]
         return result
 
@@ -198,8 +198,11 @@ class Semantic_analysis:
         '''функция определения скелета предложения'''
         sent = sent_sp.copy()
         for i,k in enumerate(sent):
-            if not((k =='F') or (i in ind_main+[S,P])or k in[',','.','–',':',';']):
-                sent[i] = None
+            try:
+                if not((k =='F') or (i in ind_main+[S,P])or k in[',','.','–',':',';']):
+                    sent[i] = None
+            except:
+                pass
         return sent
 
     def storage_interface(self, sent, TextStorage):

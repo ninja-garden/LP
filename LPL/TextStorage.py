@@ -11,9 +11,15 @@ class Singleton(type):
 
 class TextStorage(metaclass=Singleton):
     def __init__(self):
+        # Содержит общую информацию о тексте (результат графематического анализа)
         self._Text = {'text': None, 'num_words': 0, 'words_list': [],
                        'words_len': [], 'num_sents': None, 'sent_list': None,
                        'num_syms': None}  # Метаинформация о тексте
+
+        #_Morph - результат морфологии
+        # sents_morph_classes содержит список предложений - каждый
+        #  элемент списка - список морфологических классов
+        self._Morph = {'sents_morph_classes':[]}
 
         self._Sentence = {'simp_sent_list': [], 'sent_type': [], 'first_simp_sent_ind': [],
                            'num_words_simp_sent': []
