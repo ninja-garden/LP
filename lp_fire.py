@@ -58,10 +58,11 @@ def morph(text, storage):
     print("МОРФОЛОГИЧЕСКИЙ АНАЛИЗ")
     print("======================================================")
     for i in range(len(morph_res)):
-        print("Предложение №{}".format(i))
+        print("Предложение №{}".format(i+1))
         print(morph_res[i])
     print("======================================================")
     storage.Morph = morph_res
+    print("Результат в файле {}".format(MORPH_FILE_NAME))
     storage.morphology_to_json(MORPH_FILE_NAME)
 
 def SSA(text, storage):
@@ -76,7 +77,7 @@ def SSA(text, storage):
     print("======================================================")
     # Далее для каждого предложения
     for i, sent in enumerate(storage.Text["words_list"]):
-        print("Предложение №{}".format(i))
+        print("Предложение №{}".format(i + 1))
         print("======================================================")
         print(sent)
         morf_klass = ssa.class_word(sent)
@@ -115,12 +116,13 @@ def SSA(text, storage):
         sp_skel["skel"] = skel
         storage.SSA_sents.append(sp_skel)
         print(skel)
-        print()
+    print("Результат в файле {}".format(SSA_FILE_NAME))
     storage.ssa_to_json(SSA_FILE_NAME)
 
 @click.command()
+@click.option('--type', default='full', help='analysis_type: graph, morph, ssa')
 @click.argument('input_file')
-def main(input_file):
+def main(input_file, type):
     """
     Главная функция приложения
     :param input_file: исходный текстовый файл
@@ -131,9 +133,19 @@ def main(input_file):
     with open(input_file, encoding='utf_8_sig') as file:
         text = file.read()
     storage = TextStorage()
-    graphematic_analysis(text, storage)
-    morph(text, storage)
-    SSA(text, storage)
+    if type == 'graph':
+        graphematic_analysis(text, storage)
+    if type == 'morph':
+        graphematic_analysis(text, storage)
+        morph(text, storage)
+    if type == 'ssa':
+        graphematic_analysis(text, storage)
+        morph(text, storage)
+        SSA(text, storage)
+    if type == 'full':
+        graphematic_analysis(text, storage)
+        morph(text, storage)
+        SSA(text, storage)
 
 
 if __name__ == '__main__':
