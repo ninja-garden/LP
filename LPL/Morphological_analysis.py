@@ -147,7 +147,7 @@ class Morphological_analysis:
                     temp_ret = temp_w[:temp_asd[0]]
                     if len(temp_ret) == 0:
                         temp_ret = '+'
-                    return [temp_ret, temp_asd[1], temp_asd2]
+                    return [''.join(reversed(temp_ret)), temp_asd[1], temp_asd2]
             if len(temp_w):
                 temp_w = temp_w[:-1]
             else:
