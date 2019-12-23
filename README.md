@@ -3,5 +3,5 @@
 
 Пример вызова:<br>
 ```
-python lp-fire.py test.txt
+python lp_fire.py test.txt
 ```
